@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('sale_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sale_id')->constrained('sales', 'id');
+            $table->foreignId('product_id')->constrained('products', 'id');
+            $table->integer('jumlah_product');
+            $table->decimal('subtotal');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('members');
+        Schema::dropIfExists('sale_details');
     }
 };

@@ -18,6 +18,11 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
+use App\Filament\Widgets\DashboardWidget;
+use App\Livewire\SaleTable;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -26,20 +31,37 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('dashboard')
             ->login()
+            ->brandName('Casier App')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->renderHook(
+                PanelsRenderHook::STYLES_AFTER,
+                fn (): HtmlString => new HtmlString('
+                    <style>
+                        .fi-sidebar {
+                            background-color: #101411 !important;
+                        }
+                    </style>
+                '),
+            )
+            ->font('Poppins')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
+            ->icons([
+                'panels::sidebar.collapse-button' => Heroicon::Bars3,
+                'panels::sidebar.expand-button' => Heroicon::XMark,
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                DashboardWidget::class,
+                SaleTable::class,
             ])
             ->middleware([
                 EncryptCookies::class,
